@@ -1,23 +1,36 @@
-import logo from './logo.svg';
+import {  useEffect, useState } from 'react';
 import './App.css';
+import { CurrencyRate } from './components/CurrencyRate';
+import { Route, Routes } from 'react-router-dom';
+import Navigation from './components/Navigation';
+import { getCurrencyList } from './data/api';
+import CurrencyConversionRenderer from './components/CurrencyConversionRenderer';
+
+
+
 
 function App() {
+  const [rates, setRates] = useState({});
+  const [isLoading, setIsLoading] = useState(true)  
+
+  useEffect(() => {
+    (async ()=> {
+      const data = await getCurrencyList();
+      setRates(data)
+      setIsLoading(false)
+      console.log(data)
+    })()
+  }, [])
+  
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Navigation /> 
+      <Routes>
+        <Route path = "/"  element = {<CurrencyConversionRenderer rates={rates} isLoading={isLoading}/>}/>
+        <Route path = "rate" element = {<CurrencyRate rates={rates}/>}/>
+      </Routes>
+     
     </div>
   );
 }
